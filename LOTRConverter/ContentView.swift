@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State var showExchangeInfotip: Bool = false
+    @State var leftAmount = ""
+    @State var rightAmount = ""
+    
     var body: some View {
         ZStack {
             // Background image
@@ -42,8 +46,11 @@ struct ContentView: View {
                                 .font(.headline)
                                 .foregroundStyle(.white)
                         }
+                        .padding(.bottom, -5)
                         // Text Field
-                        Text("Text field")
+                        TextField("Amount", text: $leftAmount)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            
                     }
                     
                     // Equal sign
@@ -67,20 +74,35 @@ struct ContentView: View {
                                 .scaledToFit()
                                 .frame(height: 33)
                         }
+                        .padding(.bottom, -5)
                         // Text Field
-                        Text("Text field")
+                        TextField("Amount", text: $rightAmount)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .multilineTextAlignment(.trailing)
                     }
                 }
+                .padding()
+                .background(Color.black.opacity(0.5))
+                .clipShape(.capsule)
                 
                 Spacer()
                 
                 // Info button
-                Image(systemName: "info.circle.fill")
-                    .font(.largeTitle)
-                    .foregroundStyle(.white)
-                    
+                HStack {
+                    Spacer()
+                    Button {
+                        showExchangeInfotip.toggle()
+                        //print("showExchangeInfotip: \(showExchangeInfotip)")
+                    } label: {
+                        Image(systemName: "info.circle.fill")
+                            .font(.largeTitle)
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.trailing)
+                }
+                
             }
-//             .border(.blue)
+             // .border(.blue)
         }
     }
 }
