@@ -20,9 +20,13 @@ struct ContentView: View {
     @State var leftCurrency: Currency = .silverPiece
     @State var rightCurrency: Currency = .goldPiece
     
+    let defaults = UserDefaults.standard
+    
     let currencyTip = CurrencyTip()
     
     var body: some View {
+        
+        
         ZStack {
             // Background image
             Image(.background)
@@ -41,7 +45,7 @@ struct ContentView: View {
                     .foregroundStyle(.white)
                     
                 HStack {
-                    // Left conversion section
+                    // Left currency section
                     VStack {
                         // Currency
                         HStack {
@@ -154,11 +158,17 @@ struct ContentView: View {
         .task {
             // the .task method runs whenever the view is loaded.
             try? Tips.configure()
+            let leftCurrencyRaw = defaults.object(forKey:"LeftCurrency") as? Double ?? Currency.silverPiece.rawValue
+            leftCurrency = Currency(rawValue: leftCurrencyRaw)!
+            let rightCurrencyRaw = defaults.object(forKey:"RightCurrency") as? Double ?? Currency.goldPiece.rawValue
+            rightCurrency = Currency(rawValue: rightCurrencyRaw)!
         }
         .onChange(of: leftCurrency) {
+            defaults.set(leftCurrency.rawValue, forKey: "LeftCurrency")
             leftAmount = rightCurrency.convert(rightAmount, to: leftCurrency)
         }
         .onChange(of: rightCurrency) {
+            defaults.set(rightCurrency.rawValue, forKey: "RightCurrency")
             rightAmount = leftCurrency.convert(leftAmount, to: rightCurrency)
         }
         .sheet(isPresented: $showExchangeInfotip) {
