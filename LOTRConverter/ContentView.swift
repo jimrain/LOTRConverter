@@ -9,20 +9,26 @@ import SwiftUI
 import TipKit
 
 struct ContentView: View {
+    enum Typing: Hashable {
+        case left
+        case right
+    }
+    
     @State var showExchangeInfotip: Bool = false
     @State var showSelectCurrency: Bool = false
     @State var leftAmount = ""
     @State var rightAmount = ""
     
-    @FocusState var leftTypeing
-    @FocusState var rightTypeing
+    @FocusState var leftTypeing: Bool
+    @FocusState var rightTypeing: Bool
+    @FocusState var typing: Typing?
     
     @State var leftCurrency: Currency = .silverPiece
     @State var rightCurrency: Currency = .goldPiece
     
     let defaults = UserDefaults.standard
     
-    let currencyTip = CurrencyTip()
+    @State var currencyTip = CurrencyTip()
     
     var body: some View {
         
@@ -46,6 +52,10 @@ struct ContentView: View {
                     
                 HStack {
                     // Left currency section
+                    /*
+                    CurrencySection(leftCurrency: $leftCurrency, rightCurrency: $rightCurrency, showSelectCurrency: $showSelectCurrency, currencyTip: $currencyTip, leftAmount: $leftAmount, rightAmount: $rightAmount, leftTypeing: $leftTypeing, rightTypeing: $rightTypeing)
+                     */
+                    
                     VStack {
                         // Currency
                         HStack {
@@ -63,6 +73,8 @@ struct ContentView: View {
                         .padding(.bottom, -5)
                         .onTapGesture {
                             showSelectCurrency.toggle()
+                            leftTypeing = false
+                            rightTypeing = false
                             // Once this has been tapped the user knows they can use it
                             // so never show the tip again
                             currencyTip.invalidate(reason: .actionPerformed)
@@ -90,6 +102,7 @@ struct ContentView: View {
                         .symbolEffect(.pulse)
                     
                     // Right conversion secton
+
                     VStack {
                         // Currency
                         HStack {
@@ -107,6 +120,8 @@ struct ContentView: View {
                         .padding(.bottom, -5)
                         .onTapGesture {
                             showSelectCurrency.toggle()
+                            leftTypeing = false
+                            rightTypeing = false
                             // Once this has been tapped the user knows they can use it
                             // so never show the tip again
                             currencyTip.invalidate(reason: .actionPerformed)
@@ -125,6 +140,7 @@ struct ContentView: View {
                             }
                         
                     }
+                    
                 }
                 .padding()
                 .background(Color.black.opacity(0.5))
@@ -138,6 +154,8 @@ struct ContentView: View {
                     Spacer()
                     Button {
                         showExchangeInfotip.toggle()
+                        leftTypeing = false
+                        rightTypeing = false
                         //print("showExchangeInfotip: \(showExchangeInfotip)")
                     } label: {
                         Image(systemName: "info.circle.fill")
