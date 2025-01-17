@@ -8,37 +8,36 @@
 import SwiftUI
 
 struct CurrencySection: View {
-    @Binding var leftCurrency: Currency
-    @Binding var rightCurrency: Currency
+    @Binding var currency1: Currency
+    @Binding var currency2: Currency
     @Binding var showSelectCurrency: Bool
 
     @Binding var currencyTip: CurrencyTip
-    @Binding var leftAmount: String
-    @Binding var rightAmount: String
+    @Binding var amount1: String
+    @Binding var amount2: String
     
-    @FocusState.Binding var leftTypeing: Bool
-    @FocusState.Binding var rightTypeing: Bool
+    @FocusState.Binding var typing: Typing?
+    let typingValue: Typing
     
     var body: some View {
         VStack {
             // Currency
             HStack {
                 // Currency Image
-                Image(leftCurrency.image)
+                Image(currency1.image)
                     .resizable()
                     .scaledToFit()
                     .frame(height: 33)
                 
                 // Currency Text
-                Text(leftCurrency.name)
+                Text(currency1.name)
                     .font(.headline)
                     .foregroundStyle(.white)
             }
             .padding(.bottom, -5)
             .onTapGesture {
                 showSelectCurrency.toggle()
-                leftTypeing = false
-                rightTypeing = false
+                typing = nil
                 // Once this has been tapped the user knows they can use it
                 // so never show the tip again
                 currencyTip.invalidate(reason: .actionPerformed)
@@ -46,13 +45,13 @@ struct CurrencySection: View {
             .popoverTip(currencyTip, arrowEdge: .bottom)
             
             // Text Field
-            TextField("Amount", text: $leftAmount)
+            TextField("Amount", text: $amount1)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             // if this text field has focus then set the leftTyping property to true. This will be used below.
-                .focused($leftTypeing)
-                .onChange(of: leftAmount) {
-                    if leftTypeing {
-                        rightAmount = leftCurrency.convert(leftAmount, to: rightCurrency)
+                .focused($typing, equals: typingValue)
+                .onChange(of: amount1) {
+                    if typing != nil {
+                        amount2 = currency1.convert(amount1, to: currency2)
                     }
                     
                 }
@@ -68,9 +67,8 @@ struct CurrencySection: View {
     @Previewable @State var currencyTip = CurrencyTip(title: Text("Change Currency"), message: Text("Select your preferred currency"))
     @Previewable @State var leftAmount: String = ""
     @Previewable @State var rightAmount: String = ""
-    @Previewable @FocusState var leftTyping: Bool
-    @Previewable @FocusState var rightTyping: Bool
+    @Previewable @FocusState var typing: Typing?
     
     
-    CurrencySection(leftCurrency: $leftCurrency, rightCurrency: $rightCurrency, showSelectCurrency: $showSelectCurrency, currencyTip: $currencyTip, leftAmount: $leftAmount, rightAmount: $rightAmount, leftTypeing: $leftTyping, rightTypeing: $rightTyping)
+    CurrencySection(currency1: $leftCurrency, currency2: $rightCurrency, showSelectCurrency: $showSelectCurrency, currencyTip: $currencyTip, amount1: $leftAmount, amount2: $rightAmount, typing: $typing, typingValue: .left)
 }

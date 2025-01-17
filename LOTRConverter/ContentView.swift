@@ -9,18 +9,13 @@ import SwiftUI
 import TipKit
 
 struct ContentView: View {
-    enum Typing: Hashable {
-        case left
-        case right
-    }
-    
     @State var showExchangeInfotip: Bool = false
     @State var showSelectCurrency: Bool = false
     @State var leftAmount = ""
     @State var rightAmount = ""
     
-    @FocusState var leftTypeing: Bool
-    @FocusState var rightTypeing: Bool
+    // @FocusState var leftTypeing: Bool
+    // @FocusState var rightTypeing: Bool
     @FocusState var typing: Typing?
     
     @State var leftCurrency: Currency = .silverPiece
@@ -52,48 +47,8 @@ struct ContentView: View {
                     
                 HStack {
                     // Left currency section
-                    /*
-                    CurrencySection(leftCurrency: $leftCurrency, rightCurrency: $rightCurrency, showSelectCurrency: $showSelectCurrency, currencyTip: $currencyTip, leftAmount: $leftAmount, rightAmount: $rightAmount, leftTypeing: $leftTypeing, rightTypeing: $rightTypeing)
-                     */
-                    
-                    VStack {
-                        // Currency
-                        HStack {
-                            // Currency Image
-                            Image(leftCurrency.image)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 33)
-                            
-                            // Currency Text
-                            Text(leftCurrency.name)
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                        }
-                        .padding(.bottom, -5)
-                        .onTapGesture {
-                            showSelectCurrency.toggle()
-                            leftTypeing = false
-                            rightTypeing = false
-                            // Once this has been tapped the user knows they can use it
-                            // so never show the tip again
-                            currencyTip.invalidate(reason: .actionPerformed)
-                        }
-                        .popoverTip(currencyTip, arrowEdge: .bottom)
-                        
-                        // Text Field
-                        TextField("Amount", text: $leftAmount)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            // if this text field has focus then set the leftTyping property to true. This will be used below.
-                            .focused($leftTypeing)
-                            .onChange(of: leftAmount) {
-                                if leftTypeing {
-                                    rightAmount = leftCurrency.convert(leftAmount, to: rightCurrency)
-                                }
-                                
-                            }
-                            
-                    }
+                    CurrencySection(currency1: $leftCurrency, currency2: $rightCurrency, showSelectCurrency: $showSelectCurrency, currencyTip: $currencyTip, amount1: $leftAmount, amount2: $rightAmount, typing: $typing, typingValue: .left)
+
                     
                     // Equal sign
                     Image(systemName: "equal")
@@ -101,45 +56,8 @@ struct ContentView: View {
                         .foregroundStyle(.white)
                         .symbolEffect(.pulse)
                     
-                    // Right conversion secton
-
-                    VStack {
-                        // Currency
-                        HStack {
-                            // Currency Text
-                            Text(rightCurrency.name)
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                            
-                            // Currency Image
-                            Image(rightCurrency.image)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 33)
-                        }
-                        .padding(.bottom, -5)
-                        .onTapGesture {
-                            showSelectCurrency.toggle()
-                            leftTypeing = false
-                            rightTypeing = false
-                            // Once this has been tapped the user knows they can use it
-                            // so never show the tip again
-                            currencyTip.invalidate(reason: .actionPerformed)
-                        }
-                    
-                        // Text Field
-                        TextField("Amount", text: $rightAmount)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .multilineTextAlignment(.trailing)
-                            .focused($rightTypeing)
-                            .onChange(of: rightAmount) {
-                                if rightTypeing {
-                                    leftAmount = rightCurrency.convert(rightAmount, to: leftCurrency)
-                                }
-                                
-                            }
-                        
-                    }
+                    // Right currency secton
+                    CurrencySection(currency1: $rightCurrency, currency2: $leftCurrency, showSelectCurrency: $showSelectCurrency, currencyTip: $currencyTip, amount1: $rightAmount, amount2: $leftAmount, typing: $typing, typingValue: .right)
                     
                 }
                 .padding()
@@ -154,8 +72,7 @@ struct ContentView: View {
                     Spacer()
                     Button {
                         showExchangeInfotip.toggle()
-                        leftTypeing = false
-                        rightTypeing = false
+                        typing = nil
                         //print("showExchangeInfotip: \(showExchangeInfotip)")
                     } label: {
                         Image(systemName: "info.circle.fill")
